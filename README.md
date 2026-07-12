@@ -1,37 +1,21 @@
-# compile-tex
+# skills
 
-A [Claude Code](https://claude.com/claude-code) skill that compiles a `.tex` file to PDF, building in an isolated temp directory so no build artifacts (`.aux`, `.log`, etc.) land next to your source — only the finished PDF is copied back.
-
-Uses `latexmk` directly if it's already on `PATH`. Otherwise falls back to the `ghcr.io/xu-cheng/texlive-full` Docker image (override with the `LATEX_DOCKER_IMAGE` env var).
-
-## Prerequisites
-
-One of:
-- `latexmk` installed and on `PATH`, or
-- Docker running (the skill pulls `ghcr.io/xu-cheng/texlive-full` on first use)
+A collection of [Claude Code](https://claude.com/claude-code) agent skills, published via [skills.sh](https://skills.sh).
 
 ## Install
 
 ```bash
-npx skills add <owner>/<repo>@compile-tex
+npx skills add https://github.com/hmasum52/skills --skill <skill-name>
 ```
 
-This installs the skill to `.claude/skills/compile-tex/` in your project.
+## Available skills
 
-## Usage
+| Skill | Description |
+|---|---|
+| [compile-tex](compile-tex/) | Compile a LaTeX (`.tex`) project to PDF in an isolated temp directory — no build artifacts land next to your source. |
 
-```bash
-bash .claude/skills/compile-tex/scripts/compile.sh [file.tex]
-```
+See each skill's own README for prerequisites, usage, and a working demo.
 
-If no filename is given and exactly one `.tex` file exists in your project root, it's used automatically.
+## License
 
-### Try it
-
-This repo ships [example.tex](example.tex) as a working demo. After installing the skill into this repo (or by pointing the script at this repo's own `.claude/skills/compile-tex/`), run:
-
-```bash
-bash .claude/skills/compile-tex/scripts/compile.sh example.tex
-```
-
-which produces `example.pdf` in the project root with no leftover build artifacts.
+MIT — see [LICENSE](LICENSE).

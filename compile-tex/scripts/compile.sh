@@ -6,11 +6,11 @@
 # LATEX_DOCKER_IMAGE).
 set -euo pipefail
 
-PROJECT_ROOT="$(pwd)"
 DOCKER_IMAGE="${LATEX_DOCKER_IMAGE:-ghcr.io/xu-cheng/texlive-full}"
 
 TEXFILE="${1:-}"
 if [ -z "$TEXFILE" ]; then
+  PROJECT_ROOT="$(pwd)"
   tex_candidates=()
   while IFS= read -r f; do tex_candidates+=("$f"); done \
     < <(find "$PROJECT_ROOT" -maxdepth 1 -type f -name '*.tex')
@@ -19,6 +19,17 @@ if [ -z "$TEXFILE" ]; then
     exit 1
   fi
   TEXFILE="$(basename "${tex_candidates[0]}")"
+else
+  # Accept a bare filename, a relative/absolute POSIX path, or a Windows-style
+  # path (C:\...\file.tex) -- normalize to POSIX and derive PROJECT_ROOT from
+  # the file's own directory instead of assuming the caller already cd'd there.
+  NORMALIZED="${TEXFILE//\\//}"
+  if [[ "$NORMALIZED" =~ ^([A-Za-z]):(/.*)$ ]]; then
+    NORMALIZED="/${BASH_REMATCH[1],,}${BASH_REMATCH[2]}"
+  fi
+  NORMALIZED="$(realpath "$NORMALIZED")"
+  PROJECT_ROOT="$(dirname "$NORMALIZED")"
+  TEXFILE="$(basename "$NORMALIZED")"
 fi
 BASENAME="${TEXFILE%.tex}"
 
